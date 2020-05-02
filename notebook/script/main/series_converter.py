@@ -36,5 +36,5 @@ def convert_to_time_series(series, length=24):
     for serie in series:
         if len(serie) >= length:
             for i in range(len(serie) - (length - 1)):
-                result.append(serie[i:i + length])
+               if i%13 ==0: result.append(serie[i:i + length])
     return result
