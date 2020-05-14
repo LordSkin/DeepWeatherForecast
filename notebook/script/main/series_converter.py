@@ -1,7 +1,7 @@
 import datetime
 
 
-def convert_to_series(data, length=24):
+def convert_to_series(data, length=24, compression=1):
     series = []
     hour = data["hour"].iloc[0]
     day = data["day"].iloc[0]
@@ -27,14 +27,14 @@ def convert_to_series(data, length=24):
     if len(new_serie) >= length:
         series.append(new_serie)
 
-    time_series = convert_to_time_series(series, length)
+    time_series = convert_to_time_series(series, length, compression)
     return time_series
 
 
-def convert_to_time_series(series, length=24):
+def convert_to_time_series(series, length=24, compression=1):
     result = []
     for serie in series:
         if len(serie) >= length:
             for i in range(len(serie) - (length - 1)):
-               if i%7 ==0: result.append(serie[i:i + length])
+               if i%compression ==0: result.append(serie[i:i + length])
     return result
