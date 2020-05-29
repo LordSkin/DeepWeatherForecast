@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def mean_square_loss_func(y_actual, y_predicted):
     return ((y_actual[0, 0] - y_predicted[0, 0]) ** 2 +
             (y_actual[0, 1] - y_predicted[0, 1]) ** 2 +
@@ -40,3 +43,7 @@ def mean_proportional_loss_func(y_actual, y_predicted):
             abs(y_actual[0, 16] - y_predicted[0, 16]) +
             abs(y_actual[0, 17] - y_predicted[0, 17]) +
             abs(y_actual[0, 18] - y_predicted[0, 18])) / 18
+
+
+def error_on_series(y_actual, y_predicted):  # [n, 37]
+    return np.mean(np.sum(abs(y_actual[:, :18] - y_predicted[:, :18]), axis=1) / 18)
