@@ -1,5 +1,5 @@
 from hyperdash import Experiment
-from tensorflow_core.python.keras.callbacks import Callback
+from tensorflow.keras.callbacks import Callback
 
 
 class HyperdashCallback(Callback):
@@ -13,7 +13,7 @@ class HyperdashCallback(Callback):
         self.exp.end()
 
     def on_epoch_end(self, epoch, logs=None):
-        self.exp.metric("progress", self.last - logs["loss"])
+        self.exp.metric("progress", min(0.1, self.last - logs["loss"]))
         self.last = logs["loss"]
-        self.exp.metric("loss", logs["loss"])
-        self.exp.metric("val_loss", logs["val_loss"])
+        self.exp.metric("loss", min(0.5, logs["loss"]))
+        self.exp.metric("val_loss", min(0.5, logs["val_loss"]))
