@@ -1,49 +1,85 @@
 import numpy as np
+from keras.losses import mean_absolute_error, mean_squared_error
 
 
 def mean_square_loss_func(y_actual, y_predicted):
-    return ((y_actual[0, 0] - y_predicted[0, 0]) ** 2 +
-            (y_actual[0, 1] - y_predicted[0, 1]) ** 2 +
-            (y_actual[0, 2] - y_predicted[0, 2]) ** 2 +
-            (y_actual[0, 3] - y_predicted[0, 3]) ** 2 +
-            (y_actual[0, 4] - y_predicted[0, 4]) ** 2 +
-            (y_actual[0, 5] - y_predicted[0, 5]) ** 2 +
-            (y_actual[0, 6] - y_predicted[0, 6]) ** 2 +
-            (y_actual[0, 7] - y_predicted[0, 7]) ** 2 +
-            (y_actual[0, 8] - y_predicted[0, 8]) ** 2 +
-            (y_actual[0, 9] - y_predicted[0, 9]) ** 2 +
-            (y_actual[0, 10] - y_predicted[0, 10]) ** 2 +
-            (y_actual[0, 11] - y_predicted[0, 11]) ** 2 +
-            (y_actual[0, 12] - y_predicted[0, 12]) ** 2 +
-            (y_actual[0, 13] - y_predicted[0, 13]) ** 2 +
-            (y_actual[0, 14] - y_predicted[0, 14]) ** 2 +
-            (y_actual[0, 15] - y_predicted[0, 15]) ** 2 +
-            (y_actual[0, 16] - y_predicted[0, 16]) ** 2 +
-            (y_actual[0, 17] - y_predicted[0, 17]) ** 2 +
-            (y_actual[0, 18] - y_predicted[0, 18]) ** 2) / 18
+    return mean_squared_error(y_actual[:, :19], y_predicted[:, :19])
 
 
 def mean_proportional_loss_func(y_actual, y_predicted):
-    return (abs(y_actual[0, 0] - y_predicted[0, 0]) +
-            abs(y_actual[0, 1] - y_predicted[0, 1]) +
-            abs(y_actual[0, 2] - y_predicted[0, 2]) +
-            abs(y_actual[0, 3] - y_predicted[0, 3]) +
-            abs(y_actual[0, 4] - y_predicted[0, 4]) +
-            abs(y_actual[0, 5] - y_predicted[0, 5]) +
-            abs(y_actual[0, 6] - y_predicted[0, 6]) +
-            abs(y_actual[0, 7] - y_predicted[0, 7]) +
-            abs(y_actual[0, 8] - y_predicted[0, 8]) +
-            abs(y_actual[0, 9] - y_predicted[0, 9]) +
-            abs(y_actual[0, 10] - y_predicted[0, 10]) +
-            abs(y_actual[0, 11] - y_predicted[0, 11]) +
-            abs(y_actual[0, 12] - y_predicted[0, 12]) +
-            abs(y_actual[0, 13] - y_predicted[0, 13]) +
-            abs(y_actual[0, 14] - y_predicted[0, 14]) +
-            abs(y_actual[0, 15] - y_predicted[0, 15]) +
-            abs(y_actual[0, 16] - y_predicted[0, 16]) +
-            abs(y_actual[0, 17] - y_predicted[0, 17]) +
-            abs(y_actual[0, 18] - y_predicted[0, 18])) / 18
+    return mean_absolute_error(y_actual[:, :19], y_predicted[:, :19])
 
+
+def mean_proportional_loss_func_rev(y_actual, y_predicted):
+    return mean_absolute_error(y_actual[:19, :], y_predicted[:19, :])
 
 def error_on_series(y_actual, y_predicted):  # [n, 37]
-    return np.mean(np.sum(abs(y_actual[:, :18] - y_predicted[:, :18]), axis=1) / 18)
+    return np.mean(np.sum(abs(y_actual[:, :19] - y_predicted[:, :19]), axis=1) / 19)
+
+
+def error_on_rain(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 0] - y_predicted[:, 0]))
+
+
+def error_on_temp(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 1] - y_predicted[:, 1]))
+
+
+def error_on_wetb(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 2] - y_predicted[:, 2]))
+
+
+def error_on_dewpt(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 3] - y_predicted[:, 3]))
+
+
+def error_on_rhum(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 4] - y_predicted[:, 4]))
+
+
+def error_on_msl(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 5] - y_predicted[:, 5]))
+
+
+def error_on_wdsp(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 6] - y_predicted[:, 6]))
+
+
+def error_on_sun(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 7] - y_predicted[:, 7]))
+
+
+def error_on_vis(y_actual, y_predicted):  # [n, 37]
+    return np.mean(abs(y_actual[:, 8] - y_predicted[:, 8]))
+
+
+def error_on_weather_code(y_actual, y_predicted):  # [n, 37]
+    return np.mean(np.sum(abs(y_actual[:, 9:19] - y_predicted[:, 9:19]), axis=1) / 10)
+
+
+def _decode_one_hot(one_hot_hour):
+    return np.argmax(one_hot_hour, axis=1)
+
+
+def filter_jan_feb(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 0
+
+
+def filter_mar_apr(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 1
+
+
+def filter_may_jun(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 2
+
+
+def filter_jul_aug(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 3
+
+
+def filter_sep_oct(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 4
+
+
+def filter_nov_dec(vec):  # [37, 71]
+    return _decode_one_hot(vec[:, 30:, 0]) == 5

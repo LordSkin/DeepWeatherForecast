@@ -13,7 +13,8 @@ class HyperdashCallback(Callback):
         self.exp.end()
 
     def on_epoch_end(self, epoch, logs=None):
-        self.exp.metric("progress", min(0.1, self.last - logs["loss"]))
-        self.last = logs["loss"]
-        self.exp.metric("loss", min(0.5, logs["loss"]))
-        self.exp.metric("val_loss", min(0.5, logs["val_loss"]))
+        if 'loss' in logs:
+            self.exp.metric("progress", min(0.1, self.last - logs["loss"]))
+            self.last = logs["loss"]
+            self.exp.metric("loss", min(0.5, logs["loss"]))
+            self.exp.metric("val_loss", min(0.5, logs["val_loss"]))
